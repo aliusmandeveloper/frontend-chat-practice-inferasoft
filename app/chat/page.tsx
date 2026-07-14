@@ -9,12 +9,12 @@ import { ChatWindow } from '@/components/chat/ChatWindow';
 import { Conversation } from '@/types';
 import Loader from '@/components/common/Loader';
 import toast from 'react-hot-toast';
-
+import { NotificationBell } from '@/components/chat/NotificationBell';
 export default function ChatPage() {
     const { user, loading } = useAuth();
     const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
     const [usersWithStatus, setUsersWithStatus] = useState<any[]>([]);
-    
+
     const {
         conversations,
         currentConversation,
@@ -28,12 +28,12 @@ export default function ChatPage() {
         setMessages
     } = useChat(user?._id || '');
 
-    const { 
-        isConnected, 
+    const {
+        isConnected,
         onlineUsers,
-        sendMessage, 
-        sendTyping, 
-        onReceiveMessage 
+        sendMessage,
+        sendTyping,
+        onReceiveMessage
     } = useSocket(user?._id || '');
 
     // ✅ Force update users when onlineUsers changes
@@ -104,15 +104,15 @@ export default function ChatPage() {
     // Handle send message
     const handleSendMessage = (text: string) => {
         if (!currentConversation) return;
-        
+
         const messageData = {
             conversationId: currentConversation._id,
             senderId: user!._id,
             text
         };
-        
+
         sendMessage(messageData);
-        
+
         const tempMessage = {
             _id: Date.now().toString(),
             text,
@@ -129,11 +129,11 @@ export default function ChatPage() {
     // Handle typing
     const handleTyping = (isTyping: boolean) => {
         if (!currentConversation) return;
-        
+
         const otherUser = currentConversation.participants.find(
             p => p._id !== user?._id
         );
-        
+
         if (otherUser) {
             sendTyping({
                 conversationId: currentConversation._id,
@@ -150,17 +150,21 @@ export default function ChatPage() {
     return (
         <div className="flex h-screen bg-gray-100">
             <div className="w-1/3 bg-white border-r">
-                <div className="p-4 border-b">
-                    <h1 className="text-xl font-bold">Chats</h1>
-                    <p className="text-sm text-gray-500">
-                        {user.name} 
-                        <span className={`ml-2 text-xs ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
-                            {isConnected ? '🟢 Online' : '🔴 Offline'}
-                        </span>
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                        Online users: {onlineUsers?.length || 0}
-                    </p>
+              {/* // ✅ NAYA CODE - YE PASTE KARO */}
+                <div className="p-4 border-b flex justify-between items-center">
+                    <div>
+                        <h1 className="text-xl font-bold">Chats</h1>
+                        <p className="text-sm text-gray-500">
+                            {user.name}
+                            <span className={`ml-2 text-xs ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
+                                {isConnected ? '🟢 Online' : '🔴 Offline'}
+                            </span>
+                        </p>
+                        {/* <p className="text-xs text-gray-400 mt-1">
+                            Online users: {onlineUsers?.length || 0}
+                        </p> */}
+                    </div>
+                    <NotificationBell />
                 </div>
                 <ChatList
                     conversations={conversations}

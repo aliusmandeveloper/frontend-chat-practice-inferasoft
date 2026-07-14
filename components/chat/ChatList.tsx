@@ -38,7 +38,7 @@ export const ChatList = ({
     // ✅ Show users list if no conversations
     if (conversations.length === 0 && users.length > 0) {
         return (
-            <div className="h-full overflow-y-auto">
+            <div className=" overflow-y-auto">
                 <div className="p-4 border-b bg-gray-50">
                     <h3 className="font-semibold text-gray-600">All Users</h3>
                 </div>
