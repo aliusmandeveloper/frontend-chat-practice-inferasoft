@@ -38,7 +38,7 @@ export const ChatList = ({
     // ✅ Show users list if no conversations
     if (conversations.length === 0 && users.length > 0) {
         return (
-            <div className=" overflow-y-auto">
+            <div className="overflow-y-auto">
                 <div className="p-4 border-b bg-gray-50">
                     <h3 className="font-semibold text-gray-600">All Users</h3>
                 </div>
@@ -59,17 +59,25 @@ export const ChatList = ({
                             className="flex items-center p-4 hover:bg-gray-100 cursor-pointer border-b"
                         >
                             <div className="relative">
-                                <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                                    {/* ✅ Safe access */}
-                                    {user?.name?.charAt(0)?.toUpperCase() || '?'}
-                                </div>
+                                {/* ✅ Profile Image with fallback */}
+                                {user?.profilePic ? (
+                                    <img
+                                        src={user.profilePic}
+                                        alt={user.name}
+                                        className="w-12 h-12 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
+                                        {user?.name?.charAt(0)?.toUpperCase() || '?'}
+                                    </div>
+                                )}
                                 {user?.isOnline && (
                                     <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                                 )}
                             </div>
                             <div className="ml-3 flex-1">
                                 <div className="flex justify-between items-center">
-                                    <h3 className="font-semibold">{user?.name || 'Unknown'}</h3>
+                                    <h3 className="font-semibold text-gray-800">{user?.name || 'Unknown'}</h3>
                                     <span className="text-xs text-gray-500">
                                         {user?.isOnline ? '🟢 Online' : '⚫ Offline'}
                                     </span>
@@ -86,7 +94,7 @@ export const ChatList = ({
     }
 
     return (
-        <div className="h-full overflow-y-auto">
+        <div className="overflow-y-auto">
             {conversations.map((conversation) => {
                 const otherUser = getOtherUser(conversation);
                 if (!otherUser) return null;
@@ -98,10 +106,18 @@ export const ChatList = ({
                         className="flex items-center p-4 hover:bg-gray-100 cursor-pointer border-b"
                     >
                         <div className="relative">
-                            <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                                {/* ✅ Safe access */}
-                                {otherUser?.name?.charAt(0)?.toUpperCase() || '?'}
-                            </div>
+                            {/* ✅ Profile Image with fallback */}
+                            {otherUser?.profilePic ? (
+                                <img
+                                    src={otherUser.profilePic}
+                                    alt={otherUser.name}
+                                    className="w-12 h-12 rounded-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
+                                    {otherUser?.name?.charAt(0)?.toUpperCase() || '?'}
+                                </div>
+                            )}
                             {otherUser?.isOnline && (
                                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                             )}
@@ -109,7 +125,7 @@ export const ChatList = ({
 
                         <div className="ml-3 flex-1">
                             <div className="flex justify-between items-center">
-                                <h3 className="font-semibold">{otherUser?.name || 'Unknown'}</h3>
+                                <h3 className="font-semibold text-gray-800">{otherUser?.name || 'Unknown'}</h3>
                                 <span className="text-xs text-gray-500">
                                     {getTime(conversation.updatedAt)}
                                 </span>

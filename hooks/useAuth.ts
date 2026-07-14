@@ -18,8 +18,15 @@ export const useAuth = () => {
         }
     }, []);
 
+     // ✅ Make fetchUser accessible outside
     const fetchUser = async () => {
         try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setLoading(false);
+                return;
+            }
+            
             const res = await api.get('/users/me');
             setUser(res.data.user);
         } catch (error) {
@@ -30,6 +37,12 @@ export const useAuth = () => {
         }
     };
 
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    // ✅ Return fetchUser
+   
     const login = async (email: string, password: string) => {
         try {
             const res = await api.post('/auth/login', { email, password });
@@ -63,5 +76,5 @@ export const useAuth = () => {
         toast.success('Logged out');
     };
 
-    return { user, loading, login, register, logout };
+    return { user, loading, login, register, logout ,fetchUser};
 };

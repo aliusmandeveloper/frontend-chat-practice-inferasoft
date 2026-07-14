@@ -19,14 +19,21 @@ export const ChatWindow = ({
     currentUser,
     messages,
     onSendMessage,
-    onTyping = () => {}
+    onTyping = () => { }
 }: ChatWindowProps) => {
+    
     const getOtherUser = () => {
-        return conversation.participants.find(
+        const other = conversation.participants.find(
             p => p._id !== currentUser._id
         );
-    };
 
+        // ✅ Debug log
+        // console.log('Current User:', currentUser);
+        // console.log('All Participants:', conversation.participants);
+        // console.log('Other User:', other);
+
+        return other;
+    };
     const otherUser = getOtherUser();
 
     // ✅ Agar otherUser nahi hai to return karo
@@ -52,19 +59,27 @@ export const ChatWindow = ({
 
     return (
         <div className="flex flex-col h-full">
-            {/* Header */}
+            {/* ✅ Header with Profile Image */}
             <div className="flex items-center p-4 border-b bg-white">
                 <div className="relative">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                        {/* ✅ Safe access with optional chaining and fallback */}
-                        {otherUser?.name?.charAt(0)?.toUpperCase() || '?'}
-                    </div>
+                    {/* ✅ Profile Image with fallback */}
+                    {otherUser?.profilePic ? (
+                        <img
+                            src={otherUser.profilePic}
+                            alt={otherUser.name}
+                            className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                        />
+                    ) : (
+                        <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center text-lg font-bold">
+                            {otherUser?.name?.charAt(0)?.toUpperCase() || '?'}
+                        </div>
+                    )}
                     {otherUser?.isOnline && (
                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                     )}
                 </div>
                 <div className="ml-3">
-                    <h2 className="font-semibold">{otherUser?.name || 'Unknown'}</h2>
+                    <h2 className="font-semibold text-gray-800">{otherUser?.name || 'Unknownnn'}</h2>
                     <p className="text-xs text-gray-500">
                         {otherUser?.isOnline ? '🟢 Online' : '⚫ Offline'}
                     </p>
@@ -82,8 +97,8 @@ export const ChatWindow = ({
             )}
 
             {/* Input */}
-            <MessageInput 
-                onSend={onSendMessage} 
+            <MessageInput
+                onSend={onSendMessage}
                 onTyping={onTyping}
             />
         </div>

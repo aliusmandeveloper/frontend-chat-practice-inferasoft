@@ -6,8 +6,10 @@ import { useChat } from '@/hooks/useChat';
 import { useSocket } from '@/hooks/useSocket';
 import { ChatList } from '@/components/chat/ChatList';
 import { ChatWindow } from '@/components/chat/ChatWindow';
-import { Conversation } from '@/types';
+import { Conversation, Message } from '@/types';
 import Loader from '@/components/common/Loader';
+import Image from 'next/image';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { NotificationBell } from '@/components/chat/NotificationBell';
 export default function ChatPage() {
@@ -52,6 +54,10 @@ export default function ChatPage() {
     useEffect(() => {
         if (user) {
             fetchUsers();
+            fetchConversations();
+            setTimeout(() => {
+                fetchConversations();
+            }, 1000);
             const interval = setInterval(() => {
                 fetchUsers();
             }, 5000);
@@ -77,9 +83,29 @@ export default function ChatPage() {
             toast.success('New message received!');
         });
     }, [currentConversation]);
+    const fetchMessagesWithRetry = async (conversationId: string) => {
+        try {
+            const data = await fetchMessages(conversationId);
+            console.log('Fetched messages:', data);
 
+            // ✅ Check if messages have sender profilePic
+            if (data?.messages) {
+                data.messages.forEach((msg: Message) => {
+                    if (typeof msg.sender !== 'string') {
+                        console.log('Sender profilePic:', msg.sender?.profilePic);
+                    }
+                });
+            }
+            return data;
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+            return null;
+        }
+    };
     // Handle conversation select
     const handleSelectConversation = async (conversation: Conversation) => {
+        console.log('Selected Conversation:', conversation);
+        console.log('Participants:', conversation.participants);
         if (conversation._id === 'new') {
             const otherUser = conversation.participants.find(
                 p => p._id !== user?._id
@@ -149,22 +175,41 @@ export default function ChatPage() {
 
     return (
         <div className="flex h-screen bg-gray-100">
-            <div className="w-1/3 bg-white border-r">
-              {/* // ✅ NAYA CODE - YE PASTE KARO */}
-                <div className="p-4 border-b flex justify-between items-center">
-                    <div>
-                        <h1 className="text-xl font-bold">Chats</h1>
-                        <p className="text-sm text-gray-500">
-                            {user.name}
-                            <span className={`ml-2 text-xs ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
-                                {isConnected ? '🟢 Online' : '🔴 Offline'}
-                            </span>
-                        </p>
-                        {/* <p className="text-xs text-gray-400 mt-1">
-                            Online users: {onlineUsers?.length || 0}
-                        </p> */}
+            <div className="w-[25vw] bg-white border-r">
+                {/* // ✅ NAYA CODE - YE PASTE KARO */}
+                <div className="p-3 border-b flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        {/* ✅ Profile Image */}
+                        <Link href="/profile">
+                            <div className="relative cursor-pointer">
+                                {user?.profilePic ? (
+                                    <img
+                                        src={user.profilePic}
+                                        alt={user.name}
+                                        className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hover:border-blue-500 transition"
+                                    />
+                                ) : (
+                                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        {user?.name?.charAt(0)?.toUpperCase() || '?'}
+                                    </div>
+                                )}
+                                {/* ✅ Online status dot */}
+                                {isConnected && (
+                                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                                )}
+                            </div>
+                        </Link>
+
+                        <div>
+                            <h1 className="text-xl font-bold text-blue-500">Chats</h1>
+                            <p className="text-sm text-gray-500">{user?.name}</p>
+                        </div>
                     </div>
-                    <NotificationBell />
+
+                    <div className="flex items-center">
+
+                        <NotificationBell />
+                    </div>
                 </div>
                 <ChatList
                     conversations={conversations}
