@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getSocket } from '@/lib/socket';
 import { Socket } from 'socket.io-client';
 import { Message } from '@/types';
@@ -12,7 +12,7 @@ export const useSocket = (userId?: string) => {
         if (!userId) return;
 
         console.log('🔌 Socket init for:', userId);
-        
+
         socketRef.current = getSocket(userId);
         const socket = socketRef.current;
 
@@ -45,9 +45,21 @@ export const useSocket = (userId?: string) => {
         socketRef.current?.emit('send-message', data);
     };
 
-    const sendTyping = (data: { conversationId: string; senderId: string; receiverId: string; isTyping: boolean }) => {
+    // ✅ Send typing
+    const sendTyping = useCallback((data: {
+        conversationId: string;
+        senderId: string;
+        receiverId: string;
+        isTyping: boolean
+    }) => {
         socketRef.current?.emit('typing', data);
-    };
+    }, []);
+
+    // ✅ Listen for typing status
+    const onTypingStatus = useCallback((callback: (data: any) => void) => {
+        socketRef.current?.on('typing-status', callback);
+    }, []);
+
 
     const markSeen = (data: { messageId: string; userId: string }) => {
         socketRef.current?.emit('message-seen', data);
@@ -57,9 +69,7 @@ export const useSocket = (userId?: string) => {
         socketRef.current?.on('receive-message', callback);
     };
 
-    const onTypingStatus = (callback: (data: any) => void) => {
-        socketRef.current?.on('typing-status', callback);
-    };
+
 
     const onMessageRead = (callback: (data: any) => void) => {
         socketRef.current?.on('message-read', callback);

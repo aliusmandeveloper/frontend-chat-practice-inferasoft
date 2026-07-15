@@ -15,7 +15,7 @@ export const RegisterForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!name || !email || !password || !confirmPassword) {
             toast.error('Please fill all fields');
             return;
@@ -40,7 +40,7 @@ export const RegisterForm = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
                 <h1 className="text-2xl font-bold text-center mb-6 text-blue-500">Register</h1>
-                
+
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block text-gray-700 mb-2">Name</label>
@@ -48,8 +48,7 @@ export const RegisterForm = () => {
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
-
+                            className="w-full px-4 py-2 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300 focus:border-transparent text-gray-900"
                             placeholder="Enter your name"
                             disabled={loading}
                         />
@@ -61,8 +60,7 @@ export const RegisterForm = () => {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Enter your email"
+                            className="w-full px-4 py-2 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300 focus:border-transparent text-gray-900" placeholder="Enter your email"
                             disabled={loading}
                         />
                     </div>
@@ -73,7 +71,7 @@ export const RegisterForm = () => {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                             placeholder="Enter your password"
                             disabled={loading}
                         />
@@ -85,7 +83,7 @@ export const RegisterForm = () => {
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                             placeholder="Confirm your password"
                             disabled={loading}
                         />

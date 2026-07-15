@@ -153,6 +153,7 @@ export default function ChatPage() {
     };
 
     // Handle typing
+    // ✅ Handle typing
     const handleTyping = (isTyping: boolean) => {
         if (!currentConversation) return;
 
@@ -161,6 +162,7 @@ export default function ChatPage() {
         );
 
         if (otherUser) {
+            console.log(`📝 Sending typing: ${isTyping} to ${otherUser.name}`);
             sendTyping({
                 conversationId: currentConversation._id,
                 senderId: user!._id,
